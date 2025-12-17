@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flood Alert System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🌧️ Flood Alert System</h1>
+        <p>Enter the values below to predict flood risk. Each input affects the prediction as explained.</p>
+
+        <form id="floodForm">
+            <div class="input-card">
+                <label>Rainfall last 24h (mm)</label>
+                <input type="number" step="0.1" name="rain_24h" placeholder="Rain 24h" required>
+                <small>High recent rainfall increases flood risk immediately.</small>
+            </div>
+
+            <div class="input-card">
+                <label>Rainfall last 72h (mm)</label>
+                <input type="number" step="0.1" name="rain_72h" placeholder="Rain 72h" required>
+                <small>Accumulated rain saturates soil and drains, raising flood risk.</small>
+            </div>
+
+            <div class="input-card">
+                <label>Relative Humidity (%)</label>
+                <input type="number" step="0.1" name="rhum" placeholder="Relative Humidity" required>
+                <small>High humidity indicates saturated air/soil, affecting flood likelihood.</small>
+            </div>
+
+            <div class="input-card">
+                <label>Drainage Score (0–1)</label>
+                <input type="number" step="0.1" name="drainage_score" placeholder="Drainage Score" required>
+                <small>Low drainage efficiency increases flood risk.</small>
+            </div>
+
+            <div class="input-card">
+                <label>Elevation Score (0–1)</label>
+                <input type="number" step="0.1" name="elevation_score" placeholder="Elevation Score" required>
+                <small>Lower areas (low score) are more prone to flooding.</small>
+            </div>
+
+            <div class="input-card">
+                <label>Phone Number(s)</label>
+                <input type="text" name="phone_numbers" placeholder="+2348012345678,+2348098765432" required>
+                <small>Separate multiple numbers with commas to receive SMS alerts.</small>
+            </div>
+
+            <button type="submit">Predict & Send Alert</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
