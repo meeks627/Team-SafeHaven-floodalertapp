@@ -57,20 +57,21 @@ Since real drainage and elevation datasets are not publicly available at high re
 ## 🏗️ Project Structure
 
 ```text
-├── app.py                # Flask backend + Twilio SMS integration
-├── predict.py            # Model training, evaluation, and serialization
-├── data.py               # Weather data collection & preprocessing
+├── app.py                # Flask backend + Twilio SMS integration           
 ├── data/
+│   ├──  data.py               # Weather data collection & preprocessing
 │   └── Lagos CSV         # Generated dataset
 ├── Model/
-│   └── flood_model.pkl   # Trained model + scaler
+│   ├── flood_model.pkl  # Trained model + scaler
+│   └──predict.py         # Model training, evaluation, and serialization
 ├── templates/
 │   └── index.html        # Frontend UI
 ├── static/
 │   ├── css/style.css
 │   └── js/script.js
 ├── .env                  # Environment variables (Twilio credentials)
-└── README.md
+├── .README.md                 
+└── requirements.txt
 ```
 
 ---
