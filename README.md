@@ -44,7 +44,7 @@ The ML model learns **how combinations of these factors interact**, instead of r
 * **Weather data:** Retrieved using the `meteostat` API
 * **Location:** Lagos, Nigeria
 * **Time range:** 2015 → Present
-* **These values would be generated for us later by the sensors, dut for now we used that**
+  
 
 Since real drainage and elevation datasets are not publicly available at high resolution, **synthetic but realistic demo scores** are generated:
 
