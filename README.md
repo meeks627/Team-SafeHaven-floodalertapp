@@ -59,7 +59,7 @@ Since real drainage and elevation datasets are not publicly available at high re
 ```text
 ├── app.py                # Flask backend + Twilio SMS integration           
 ├── data/
-│   ├──  data.py               # Weather data collection & preprocessing
+│   ├──  data.py          # Weather data collection & preprocessing
 │   └── Lagos CSV         # Generated dataset
 ├── Model/
 │   ├── flood_model.pkl  # Trained model + scaler
