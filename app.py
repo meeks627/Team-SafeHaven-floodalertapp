@@ -10,7 +10,13 @@ _project_root = os.path.dirname(os.path.abspath(__file__))
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-from data.ingest import insert_reading, get_reading_count
+_db_available = False
+try:
+    from data.ingest import insert_reading, get_reading_count
+    _db_available = True
+except Exception:
+    print("DB not available (/ingest will be disabled)")
+
 from Model.predict import load_model, FEATURES, MODEL_PATH
 
 load_dotenv()
@@ -31,19 +37,11 @@ if TWILIO_SID and TWILIO_AUTH and TWILIO_PHONE:
 else:
     print("Twilio credentials missing (SMS disabled)")
 
-_current_model = None
-_current_scaler = None
-_model_mtime = 0
+_model, _scaler = load_model(MODEL_PATH)
 
 
 def get_model():
-    global _current_model, _current_scaler, _model_mtime
-    mtime = os.path.getmtime(MODEL_PATH)
-    if mtime != _model_mtime:
-        _current_model, _current_scaler = load_model(MODEL_PATH)
-        _model_mtime = mtime
-        print("Model reloaded from disk")
-    return _current_model, _current_scaler
+    return _model, _scaler
 
 
 def alert_message(risk_prob):
@@ -96,7 +94,13 @@ def predict():
 
 @app.route('/ingest', methods=['POST'])
 def ingest():
-    """Accept IoT sensor readings and store in database."""
+    """Accept IoT sensor readings (local only — requires SQLite)."""
+    if not _db_available:
+        return jsonify({
+            'status': 'error',
+            'message': '/ingest is only available when running locally with SQLite'
+        }), 501
+
     required = ['rain_24h', 'rain_72h', 'rhum', 'drainage_score', 'elevation_score']
     data = request.json
 
@@ -114,15 +118,13 @@ def ingest():
 
 @app.route('/health', methods=['GET'])
 def health():
-    """Health check — shows DB record count."""
+    """Health check."""
     return jsonify({
         'status': 'ok',
-        'readings_stored': get_reading_count(),
-        'model_loaded': _current_model is not None
+        'readings_stored': get_reading_count() if _db_available else 0,
+        'db_available': _db_available
     })
 
 
 if __name__ == '__main__':
-    _current_model, _current_scaler = load_model(MODEL_PATH)
-    _model_mtime = os.path.getmtime(MODEL_PATH)
     app.run(host="0.0.0.0", port=10000)
