@@ -19,8 +19,8 @@ The prediction API is live on Vercel:
 | `/health` | GET | Health check |
 
 ### Test it
-
-```Run on Powershell
+Run on Powershell
+```bash
 Invoke-RestMethod `
 >>     -Uri "http://localhost:10000/ingest" `
 >>     -Method POST `
@@ -136,7 +136,8 @@ python app.py
 
 IoT sensors POST to the local `/ingest` endpoint:
 
-```Run on Powershell
+Run on Powershell
+```bash
 Invoke-RestMethod `
 >>     -Uri "http://localhost:10000/ingest" `
 >>     -Method POST `
