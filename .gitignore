@@ -4,6 +4,9 @@
 # Environment variables
 .env
 
+# Local sensor database (auto-created)
+data/sensor_data.db
+
 # Python cache
 __pycache__/
 *.pyc
