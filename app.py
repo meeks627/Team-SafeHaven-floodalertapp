@@ -2,25 +2,32 @@ from flask import Flask, render_template, request, jsonify
 import pickle
 import numpy as np
 import pandas as pd
-from twilio.rest import Client   # ✅ CHANGED
 from dotenv import load_dotenv
 import os
 
+
+load_dotenv()
+app = Flask(__name__)
 
 with open('Model/flood_model.pkl', 'rb') as f:
     model, scaler = pickle.load(f)
 
 features = ['rain_24h', 'rain_72h', 'rhum', 'drainage_score', 'elevation_score']
 
-app = Flask(__name__)
-load_dotenv()
-
-# ✅ Twilio credentials (env vars)
 TWILIO_SID = os.getenv("TWILIO_SID")
 TWILIO_AUTH = os.getenv("TWILIO_AUTH")
 TWILIO_PHONE = os.getenv("TWILIO_PHONE")
 
-client = Client(TWILIO_SID, TWILIO_AUTH)  # ✅ CHANGED
+client = None
+if TWILIO_SID and TWILIO_AUTH and TWILIO_PHONE:
+    try:
+        from twilio.rest import Client
+        client = Client(TWILIO_SID, TWILIO_AUTH)
+        print("Twilio client initialized")
+    except Exception as e:
+        print(f"Twilio init failed (SMS disabled): {e}")
+else:
+    print("Twilio credentials missing (SMS disabled)")
 
 
 def alert_message(risk_prob):
@@ -30,7 +37,7 @@ def alert_message(risk_prob):
         alert = "MODERATE RISK: Be on alert."
     else:
         alert = "LOW RISK"
-    return f'Risk Probability: {risk_prob:.2f}\n{alert}'
+    return f'Risk Probability: {risk_prob:.2%}\n{alert}'
 
 
 @app.route('/')
@@ -40,25 +47,23 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """IoT ingestion endpoint — accepts sensor readings and returns flood risk."""
     data = request.json
 
     # Extract phone numbers if provided
     phone_numbers = data.pop('phone_numbers', '')
     
-    # Prepare input for model
-    sample = pd.DataFrame([data])
-    sample[features] = scaler.transform(sample[features])
+    sample = pd.DataFrame([data])[features]
+    sample_scaled = scaler.transform(sample.values)
     
-    # Predict risk probability
-    risk_prob = model.predict_proba(sample)[0,1]
+    risk_prob = model.predict_proba(sample_scaled)[0, 1]
     alert = alert_message(risk_prob)
 
-    # ✅ Send SMS with Twilio (logic unchanged)
-    if phone_numbers:
+    if phone_numbers and client:
         numbers = [num.strip() for num in phone_numbers.split(',')]
         try:
             for num in numbers:
-                msg = client.messages.create(
+                client.messages.create(
                     body=alert,
                     from_=TWILIO_PHONE,
                     to=num
@@ -66,6 +71,8 @@ def predict():
             print("SMS sent successfully")
         except Exception as e:
             print(f"SMS failed: {e}")
+    elif phone_numbers and not client:
+        print("SMS skipped: Twilio not configured")
 
     return jsonify({'alert': alert})
 
