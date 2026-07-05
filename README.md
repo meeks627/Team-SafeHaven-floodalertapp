@@ -213,7 +213,7 @@ python Model/predict.py
 python app.py
 ```
 
-Visit `http://localhost:10000`
+Visit `https://team-safe-haven-floodalertapp-e7sm.vercel.app/`
 
 ---
 
