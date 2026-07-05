@@ -20,10 +20,12 @@ The prediction API is live on Vercel:
 
 ### Test it
 
-```bash
-curl -X POST https://team-safe-haven-floodalertapp-e7sm.vercel.app/predict \
-  -H "Content-Type: application/json" \
-  -d '{"rain_24h":15,"rain_72h":70,"rhum":70,"drainage_score":0.5,"elevation_score":0.2}'
+```Run on Powershell
+Invoke-RestMethod `
+>>     -Uri "http://localhost:10000/ingest" `
+>>     -Method POST `
+>>     -ContentType "application/json" `
+>>     -Body '{"rain_24h":12,"rain_72h":45,"rhum":82,"drainage_score":0.3,"elevation_score":0.4}'
 ```
 
 ---
@@ -134,10 +136,12 @@ python app.py
 
 IoT sensors POST to the local `/ingest` endpoint:
 
-```bash
-curl -X POST http://localhost:10000/ingest \
-  -H "Content-Type: application/json" \
-  -d '{"rain_24h":12,"rain_72h":45,"rhum":82,"drainage_score":0.3,"elevation_score":0.4}'
+```Run on Powershell
+Invoke-RestMethod `
+>>     -Uri "http://localhost:10000/ingest" `
+>>     -Method POST `
+>>     -ContentType "application/json" `
+>>     -Body '{"rain_24h":12,"rain_72h":45,"rhum":82,"drainage_score":0.3,"elevation_score":0.4}'
 ```
 
 ### 2. Retrain the model (when you have enough new data)
