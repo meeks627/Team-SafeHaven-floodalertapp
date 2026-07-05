@@ -2,7 +2,6 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 import os
-
 DB_PATH = os.path.join(os.path.dirname(__file__), 'sensor_data.db')
 
 CREATE_SQL = '''
@@ -19,18 +18,25 @@ CREATE TABLE IF NOT EXISTS sensor_readings (
 )
 '''
 
+_db_initialized = False
 
-def get_connection():
+
+def _ensure_db():
+    global _db_initialized
+    if _db_initialized:
+        return
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    conn = get_connection()
     conn.execute(CREATE_SQL)
     conn.commit()
     conn.close()
+    _db_initialized = True
+
+
+def get_connection():
+    _ensure_db()
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 def insert_reading(data: dict) -> int:
@@ -73,6 +79,3 @@ def get_reading_count() -> int:
     count = conn.execute('SELECT COUNT(*) FROM sensor_readings').fetchone()[0]
     conn.close()
     return count
-
-
-init_db()

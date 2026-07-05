@@ -8,7 +8,7 @@ An **ML-powered flood risk prediction system** designed as a prototype to demons
 
 The prediction API is live on Vercel:
 
-**[https://team-safehaven-floodalertapp.vercel.app](https://team-safehaven-floodalertapp.vercel.app)**
+**[https://team-safe-haven-floodalertapp-e7sm.vercel.app](https://team-safe-haven-floodalertapp-e7sm.vercel.app)**
 
 ### Available endpoints
 
@@ -21,7 +21,7 @@ The prediction API is live on Vercel:
 ### Test it
 
 ```bash
-curl -X POST https://team-safehaven-floodalertapp.vercel.app/predict \
+curl -X POST https://team-safe-haven-floodalertapp-e7sm.vercel.app/predict \
   -H "Content-Type: application/json" \
   -d '{"rain_24h":15,"rain_72h":70,"rhum":70,"drainage_score":0.5,"elevation_score":0.2}'
 ```

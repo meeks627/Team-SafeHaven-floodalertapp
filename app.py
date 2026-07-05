@@ -14,8 +14,8 @@ _db_available = False
 try:
     from data.ingest import insert_reading, get_reading_count
     _db_available = True
-except Exception:
-    print("DB not available (/ingest will be disabled)")
+except Exception as e:
+    print(f"DB not available (/ingest will be disabled): {e}")
 
 from Model.predict import load_model, FEATURES, MODEL_PATH
 
